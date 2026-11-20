@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>متابعة الحمل</title>
+<style>
+:root{--bg:#fdf6f8;--card:#fff;--text:#3a2a30;--muted:#8a7480;--accent:#d6527e;--accent2:#f29bb6;--soft:#fbe4ec;--line:#f0dde4;--today:#fff4c2;--due:#d9f2e3;--x:rgba(214,70,70,.38);--shadow:0 4px 18px rgba(120,60,80,.08);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#1b1317;--card:#261b21;--text:#f5e8ed;--muted:#b49aa6;--accent:#f06c99;--accent2:#a23a60;--soft:#3a2530;--line:#3b2a33;--today:#5a4a12;--due:#1f4a33;--x:rgba(255,110,110,.4);--shadow:0 4px 18px rgba(0,0,0,.3)}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#1b1317;--card:#261b21;--text:#f5e8ed;--muted:#b49aa6;--accent:#f06c99;--accent2:#a23a60;--soft:#3a2530;--line:#3b2a33;--today:#5a4a12;--due:#1f4a33;--x:rgba(255,110,110,.4);--shadow:0 4px 18px rgba(0,0,0,.3)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic",system-ui,sans-serif;line-height:1.5}
+button{font:inherit;color:inherit}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+.hero{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:24px;padding:22px;box-shadow:0 10px 30px rgba(214,82,126,.25)}
+.hero h1{margin:0 0 4px;font-size:1.3rem}
+.hero .sub{opacity:.92;font-size:.92rem}
+.big{display:flex;align-items:baseline;gap:10px;margin:12px 0 6px}
+.big b{font-size:3rem;line-height:1}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.22);border-radius:999px;padding:3px 12px;font-size:.88rem}
+.bar{height:10px;background:rgba(255,255,255,.3);border-radius:99px;margin-top:16px;overflow:hidden}
+.bar i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .6s}
+.barlbl{display:flex;justify-content:space-between;font-size:.82rem;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow)}
+.stat small{color:var(--muted);display:block;font-size:.78rem}
+.stat strong{font-size:1.05rem}
+.stat.due{background:var(--due)}
+.tabs{display:flex;gap:6px;background:var(--soft);padding:5px;border-radius:16px;margin-bottom:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.tabs button{flex:1;border:0;background:transparent;padding:10px;border-radius:12px;font-weight:600;cursor:pointer}
+.tabs button.on{background:var(--accent);color:#fff;box-shadow:0 3px 10px rgba(214,82,126,.35)}
+.nav{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.nav h2{margin:0;font-size:1.05rem;text-align:center;flex:1}
+.nav button,.set button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 14px;cursor:pointer}
+.nav button:disabled{opacity:.35;cursor:default}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.8rem;margin:0 2px 12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:14px;height:14px;border-radius:5px;display:inline-block;position:relative}
+.dot.t{background:var(--today);border:2px solid var(--accent)}
+.dot.d{background:var(--due)}
+.dot.p{background:var(--card);border:1px solid var(--line);color:var(--x);font-size:.8rem;line-height:11px;text-align:center;font-weight:700}
+.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin-bottom:14px;box-shadow:var(--shadow)}
+.bh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.bh h3{margin:0;font-size:1.02rem}
+.bh small{color:var(--muted);display:block;font-size:.8rem}
+.tag{background:var(--soft);color:var(--accent);border-radius:999px;padding:2px 10px;font-size:.76rem;font-weight:700}
+.tag.now{background:var(--accent);color:#fff}
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.day{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 6px;cursor:pointer;transition:transform .15s}
+.day:hover{transform:translateY(-2px)}
+.day .wd{font-size:.78rem;color:var(--muted)}
+.day .gd{font-size:1.7rem;font-weight:800;line-height:1.2}
+.day .gm{font-size:.82rem}
+.day .hj{font-size:.72rem;color:var(--muted)}
+.day .pn{margin-top:4px;font-size:.72rem;background:var(--soft);color:var(--accent);border-radius:8px;padding:0 8px;font-weight:700}
+.day em{position:absolute;top:-8px;inset-inline-start:8px;font-style:normal;font-size:.68rem;background:var(--accent);color:#fff;border-radius:8px;padding:0 8px}
+.past>*{opacity:.55}
+.past::after,.mini.past::after{content:"✕";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:300;color:var(--x);pointer-events:none}
+.today{background:var(--today);border:2px solid var(--accent);box-shadow:0 0 0 4px rgba(214,82,126,.15)}
+.due{background:var(--due);border-color:#2e9e63}
+.due em{background:#2e9e63}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal .h{text-align:center;font-size:.72rem;color:var(--muted);padding-bottom:2px}
+.mini{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;cursor:pointer;padding:0;line-height:1.1}
+.mini b{font-size:.92rem}
+.mini small{font-size:.6rem;color:var(--accent)}
+.mini.past>*{opacity:.5}
+.mini.past::after{font-size:1.5rem}
+.mini.today{border-width:2px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.mgrid .box{margin:0}
+.link{border:0;background:none;color:var(--accent);cursor:pointer;font-size:.8rem;font-weight:700;padding:0}
+dialog{border:0;border-radius:22px;background:var(--card);color:var(--text);padding:22px;max-width:340px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog h3{margin:0 0 4px;font-size:1.3rem}
+dialog p{margin:4px 0;color:var(--muted);font-size:.92rem}
+dialog .st{margin:12px 0;font-weight:700;color:var(--accent)}
+dialog button{border:0;background:var(--accent);color:#fff;border-radius:12px;padding:9px 24px;cursor:pointer}
+.set{margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:.86rem}
+.set input{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:7px 10px;font:inherit}
+.note{color:var(--muted);font-size:.78rem;margin-top:10px}
+@media(max-width:520px){.wrap{padding:12px}.big b{font-size:2.5rem}.days{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}.day .gd{font-size:1.45rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>🤰 متابعة الحمل</h1>
+    <div class="sub" id="todayLine"></div>
+    <div class="big"><b id="dayNum">0</b><span>يوم من الحمل</span></div>
+    <div class="chips"><span class="chip" id="elapsed"></span><span class="chip" id="tri"></span></div>
+    <div class="bar"><i id="fill" style="width:0"></i></div>
+    <div class="barlbl"><span id="pct"></span><span id="left"></span></div>
+  </section>
+  <section class="stats">
+    <div class="stat"><small>أول يوم في الحمل</small><strong id="sStart"></strong></div>
+    <div class="stat due"><small>موعد الولادة التقريبي</small><strong id="sDue"></strong></div>
+    <div class="stat"><small>الأسبوع الحالي</small><strong id="sWeek"></strong></div>
+    <div class="stat"><small>الشهر الحالي</small><strong id="sMonth"></strong></div>
+  </section>
+
+  <div class="tabs" id="tabs">
+    <button data-v="week" class="on">أسبوع</button>
+    <button data-v="month">شهر</button>
+    <button data-v="year">السنة</button>
+  </div>
+  <div class="nav" id="nav">
+    <button id="next">‹ التالي</button>
+    <h2 id="navTitle"></h2>
+    <button id="prev">السابق ›</button>
+  </div>
+  <div class="legend">
+    <span><i class="dot p">✕</i>يوم مضى</span>
+    <span><i class="dot t"></i>اليوم</span>
+    <span><i class="dot d"></i>يوم الولادة المتوقع</span>
+  </div>
+  <div id="view"></div>
+
+  <div class="set">
+    <label for="lmp">تعديل تاريخ أول يوم:</label>
+    <input type="date" id="lmp">
+    <button id="reset">إعادة الضبط</button>
+  </div>
+  <p class="note">مدة الحمل 280 يوماً (40 أسبوعاً) من أول يوم. موعد الولادة تقريبي وقد يختلف، والتاريخ الهجري قد يختلف بيوم حسب رؤية الهلال. اضغط على أي يوم لعرض تفاصيله. الصفحة للمتابعة فقط ولا تغني عن استشارة الطبيب.</p>
+</div>
+
+<dialog id="dlg"><h3 id="dWd"></h3><p id="dG"></p><p id="dH"></p><p id="dP"></p><div class="st" id="dS"></div><button id="dClose">إغلاق</button></dialog>
+
+<script>
+const DAY = 864e5, TOTAL = 280, DEFAULT_START = "2026-10-13";
+const $ = id => document.getElementById(id);
+const nf = n => Number(n).toLocaleString("ar-EG");
+const HJ = "ar-SA-u-ca-islamic-umalqura";
+const F = (loc, o) => new Intl.DateTimeFormat(loc, Object.assign({timeZone: "UTC"}, o));
+const fWd = F("ar-EG", {weekday: "long"}), fG = F("ar-EG", {day: "numeric", month: "long", year: "numeric"});
+const fGd = F("ar-EG", {day: "numeric"}), fGmn = F("ar-EG", {month: "long"}), fGm = F("ar-EG", {month: "long", year: "numeric"});
+const fGs = F("ar-EG", {day: "numeric", month: "long"});
+const fH = F(HJ, {day: "numeric", month: "long", year: "numeric"}), fHs = F(HJ, {day: "numeric", month: "long"});
+const toMs = s => { const [y, m, d] = s.split("-").map(Number); return Date.UTC(y, m - 1, d); };
+const toStr = ms => new Date(ms).toISOString().slice(0, 10);
+
+let start = toMs(DEFAULT_START);
+try { const s = localStorage.getItem("preg_start"); if (s) start = toMs(s); } catch (e) {}
+
+const n = new Date();
+const today = Date.UTC(n.getFullYear(), n.getMonth(), n.getDate());
+const dateOf = i => start + (i - 1) * DAY;
+const weekOf = i => Math.ceil(i / 7);
+const monthKey = i => { const d = new Date(dateOf(i)); return d.getUTCFullYear() * 12 + d.getUTCMonth(); };
+let dayNow = 1, months = [];
+const state = {view: "week", week: 1, month: 0};
+
+function cls(i) {
+  return (i < dayNow ? " past" : "") + (i === dayNow ? " today" : "") + (i === TOTAL ? " due" : "");
+}
+function rich(i) {
+  const t = dateOf(i);
+  return `<button class="day${cls(i)}" data-i="${i}"><span class="wd">${fWd.format(t)}</span><span class="gd">${fGd.format(t)}</span><span class="gm">${fGmn.format(t)}</span><span class="hj">${fHs.format(t)} هـ</span><span class="pn">يوم ${nf(i)}</span>${i === dayNow ? "<em>اليوم</em>" : ""}${i === TOTAL ? "<em>👶 الولادة</em>" : ""}</button>`;
+}
+function mini(i) {
+  return `<button class="mini${cls(i)}" data-i="${i}" title="يوم ${i}"><b>${fGd.format(dateOf(i))}</b><small>${nf(i)}</small></button>`;
+}
+function weekBox(w, days) {
+  const a = days[0], b = days[days.length - 1];
+  const tag = b < dayNow ? '<span class="tag">مكتمل ✓</span>' : (a <= dayNow && dayNow <= b ? '<span class="tag now">الأسبوع الحالي</span>' : "");
+  return `<section class="box"><div class="bh"><div><h3>الأسبوع ${nf(w)}</h3><small>${fGs.format(dateOf(a))} ← ${fGs.format(dateOf(b))}</small></div>${tag}</div><div class="days">${days.map(rich).join("")}</div></section>`;
+}
+function monthBox(k) {
+  const days = [];
+  for (let i = 1; i <= TOTAL; i++) if (monthKey(i) === k) days.push(i);
+  const off = (new Date(dateOf(days[0])).getUTCDay() + 1) % 7;
+  const done = days.filter(i => i < dayNow).length;
+  const hd = ["س", "ح", "ن", "ث", "ر", "خ", "ج"].map(x => `<div class="h">${x}</div>`).join("");
+  const blanks = "<div></div>".repeat(off);
+  const cur = days.includes(dayNow) ? '<span class="tag now">الشهر الحالي</span>' : (done === days.length ? '<span class="tag">مكتمل ✓</span>' : "");
+  return `<section class="box"><div class="bh"><div><h3>${fGm.format(dateOf(days[0]))}</h3><small>الأيام ${nf(days[0])} – ${nf(days[days.length - 1])} · الأسابيع ${nf(weekOf(days[0]))} – ${nf(weekOf(days[days.length - 1]))}</small></div>${cur}</div><div class="cal">${hd}${blanks}${days.map(mini).join("")}</div><div style="margin-top:10px"><button class="link" data-m="${k}">عرض الشهر بالتفصيل ›</button></div></section>`;
+}
+
+function render() {
+  const v = state.view, el = $("view");
+  $("nav").style.display = v === "year" ? "none" : "flex";
+  if (v === "week") {
+    const a = (state.week - 1) * 7 + 1, days = [];
+    for (let i = a; i < a + 7; i++) days.push(i);
+    $("navTitle").textContent = "الأسبوع " + nf(state.week) + " من " + nf(40);
+    $("prev").disabled = state.week <= 1; $("next").disabled = state.week >= 40;
+    el.innerHTML = weekBox(state.week, days);
+  } else if (v === "month") {
+    const k = months[state.month], groups = {};
+    for (let i = 1; i <= TOTAL; i++) if (monthKey(i) === k) (groups[weekOf(i)] = groups[weekOf(i)] || []).push(i);
+    $("navTitle").textContent = fGm.format(dateOf(groups[Object.keys(groups)[0]][0]));
+    $("prev").disabled = state.month <= 0; $("next").disabled = state.month >= months.length - 1;
+    el.innerHTML = Object.keys(groups).map(w => weekBox(+w, groups[w])).join("");
+  } else {
+    el.innerHTML = `<div class="mgrid">${months.map(monthBox).join("")}</div>`;
+  }
+}
+
+function init() {
+  dayNow = Math.round((today - start) / DAY) + 1;
+  months = [];
+  for (let i = 1; i <= TOTAL; i++) { const k = monthKey(i); if (months.indexOf(k) < 0) months.push(k); }
+  const c = Math.min(Math.max(dayNow, 1), TOTAL);
+  state.week = weekOf(c);
+  state.month = Math.max(0, months.indexOf(monthKey(c)));
+  $("todayLine").textContent = fWd.format(today) + "، " + fG.format(today) + " م — " + fH.format(today) + " هـ";
+  $("dayNum").textContent = nf(dayNow);
+  const e = Math.max(dayNow - 1, 0), w = Math.floor(e / 7), r = e % 7;
+  $("elapsed").textContent = nf(w) + " أسبوع و" + nf(r) + " يوم";
+  $("tri").textContent = w < 13 ? "الثلث الأول" : w < 27 ? "الثلث الثاني" : "الثلث الثالث";
+  const pct = Math.min(100, Math.max(0, dayNow / TOTAL * 100));
+  $("fill").style.width = pct + "%";
+  $("pct").textContent = nf(pct.toFixed(1)) + "٪ مكتمل";
+  const left = TOTAL - dayNow;
+  $("left").textContent = left >= 0 ? "متبقي " + nf(left) + " يوم" : "تجاوزت الموعد المتوقع";
+  $("sStart").textContent = fG.format(start);
+  $("sDue").textContent = fG.format(dateOf(TOTAL));
+  $("sWeek").textContent = "الأسبوع " + nf(Math.min(Math.max(weekOf(dayNow), 1), 40));
+  $("sMonth").textContent = "الشهر " + nf(Math.min(9, Math.max(1, Math.ceil(dayNow / 30.44))));
+  $("lmp").value = toStr(start);
+  render();
+}
+
+function setView(v) {
+  state.view = v;
+  [...$("tabs").children].forEach(x => x.classList.toggle("on", x.dataset.v === v));
+  render();
+}
+$("tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setView(b.dataset.v); });
+$("prev").onclick = () => { state.view === "week" ? state.week-- : state.month--; render(); };
+$("next").onclick = () => { state.view === "week" ? state.week++ : state.month++; render(); };
+$("view").addEventListener("click", e => {
+  const m = e.target.closest("[data-m]");
+  if (m) { state.month = months.indexOf(+m.dataset.m); setView("month"); window.scrollTo({top: 0, behavior: "smooth"}); return; }
+  const d = e.target.closest("[data-i]");
+  if (!d) return;
+  const i = +d.dataset.i, t = dateOf(i);
+  $("dWd").textContent = fWd.format(t);
+  $("dG").textContent = fG.format(t) + " م";
+  $("dH").textContent = fH.format(t) + " هـ";
+  $("dP").textContent = "يوم " + nf(i) + " من " + nf(TOTAL) + " · الأسبوع " + nf(weekOf(i));
+  $("dS").textContent = i < dayNow ? "✕ يوم مضى" : i === dayNow ? "هذا هو اليوم" : "بعد " + nf(i - dayNow) + " يوم" + (i === TOTAL ? " — الولادة المتوقعة 👶" : "");
+  $("dlg").showModal();
+});
+$("dClose").onclick = () => $("dlg").close();
+$("dlg").addEventListener("click", e => { if (e.target === $("dlg")) $("dlg").close(); });
+$("lmp").onchange = e => {
+  if (!e.target.value) return;
+  start = toMs(e.target.value);
+  try { localStorage.setItem("preg_start", e.target.value); } catch (x) {}
+  init();
+};
+$("reset").onclick = () => {
+  start = toMs(DEFAULT_START);
+  try { localStorage.removeItem("preg_start"); } catch (x) {}
+  init();
+};
+init();
+</script>
+</body>
+</html>
